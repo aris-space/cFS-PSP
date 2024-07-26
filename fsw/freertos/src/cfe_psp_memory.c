@@ -1,8 +1,6 @@
-#include <sysLib.h>
-
+#include "cfe_psp_memory.h"
 #include "cfe_psp.h"
 #include "cfe_psp_config.h" // TODO: set up (for reservedbootrecord and memalign mask)
-#include "cfe_psp_memory.h"
 #include "common_types.h" // defined in osal/src/os/inc
 
 /* macros */
@@ -22,16 +20,13 @@
 
 #define memalign(x) (x + CFE_PSP_MEMALIGN_MASK) & ~CFE_PSP_MEMALIGN_MASK
 
-/* ------ */
-
-/* Global Variables */
+extern char __text_start__;
+extern char __text_end__;
 
 CFE_PSP_ReservedMemoryMap_t CFE_PSP_ReservedMemoryMap = {0};
 
 __attribute__((section(".psp_reserved"))) __attribute__((
     aligned(8))) char pspReservedMemoryAlloc[CFE_PSP_RESERVED_MEMORY_SIZE];
-
-/* ---------------- */
 
 /*
  * CDS related functions
@@ -134,6 +129,7 @@ int32 CFE_PSP_GetVolatileDiskMem(cpuaddr *PtrToVolDisk, uint32 *SizeOfVolDisk) {
 
 /*
  * Kernel Memory functions
+ * TODO: relies on __text_start__ and __text_end__ defined in linker
  */
 
 int32 CFE_PSP_GetKernelTextSegmentInfo(cpuaddr *PtrToKernelSegment,
@@ -145,8 +141,8 @@ int32 CFE_PSP_GetKernelTextSegmentInfo(cpuaddr *PtrToKernelSegment,
     return CFE_PSP_ERROR;
   }
 
-  StartAddress = 0; // TODO: get kernel start address
-  EndAddress = 0;   // TODO: get kernel end address
+  StartAddress = (cpuaddr)&__text_start__;
+  EndAddress = (cpuaddr)&__text_end__;
 
   *PtrToKernelSegment = StartAddress;
   *SizeOfKernelSegment = (uint32)(EndAddress - StartAddress);
@@ -217,5 +213,5 @@ void CFE_PSP_SetupReservedMemoryMap(void) {
   ReservedMemoryAddr += UserReservedSize;
 }
 
-// TODO: is an action needed?
+// no action needed
 void CFE_PSP_DeleteProcessorReservedMemory(void) {}

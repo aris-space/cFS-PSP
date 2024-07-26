@@ -17,14 +17,16 @@
  ************************************************************************/
 
 #include "cmsis_os.h"
-
 #include "target_config.h"
+
+#include <zlib.h>
+
+#define CHUNK 16384
 
 #define CFE_PSP_CPU_ID (GLOBAL_CONFIGDATA.CpuId)
 #define CFE_PSP_CPU_NAME (GLOBAL_CONFIGDATA.CpuName)
 #define CFE_PSP_SPACECRAFT_ID (GLOBAL_CONFIGDATA.SpacecraftId)
 
-// TODO
 void CFE_PSP_FlushCaches(uint32 type, void *address, uint32 size) {
   if (type != 1) {
     return;
@@ -47,4 +49,20 @@ uint32 CFE_PSP_GetSpacecraftId(void) { return CFE_PSP_SPACECRAFT_ID; }
 
 const char *CFE_PSP_GetProcessorName(void) { return CFE_PSP_CPU_NAME; }
 
-uint32 CFE_PSP_Get_Timer_Tick(void) { /* TODO */ }
+void CFE_PSP_Decompress(char *srcFileName, char *dstFileName) {
+  char buffer[CHUNK];
+  int bytes_read;
+
+  // Open the gzip file
+  gzFile gz = gzopen(input_file, "rb");
+  FILE *out = fopen(output_file, "wb");
+
+  // Decompress the file
+  while ((bytes_read = gzread(gz, buffer, CHUNK)) > 0) {
+    fwrite(buffer, 1, bytes_read, out);
+  }
+
+  // Close the files
+  gzclose(gz);
+  fclose(out);
+}
