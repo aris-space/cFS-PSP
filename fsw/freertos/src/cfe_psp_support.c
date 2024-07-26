@@ -20,42 +20,31 @@
 
 #include "target_config.h"
 
-#define CFE_PSP_CPU_ID		(GLOBAL_CONFIGDATA.CpuId)
-#define CFE_PSP_CPU_NAME	(GLOBAL_CONFIGDATA.CpuName)
-#define CFE_PSP_SPACECRAFT_ID	(GLOBAL_CONFIGDATA.SpacecraftId)
-
+#define CFE_PSP_CPU_ID (GLOBAL_CONFIGDATA.CpuId)
+#define CFE_PSP_CPU_NAME (GLOBAL_CONFIGDATA.CpuName)
+#define CFE_PSP_SPACECRAFT_ID (GLOBAL_CONFIGDATA.SpacecraftId)
 
 // TODO
-void CFE_PSP_FlushCaches(uint32 type, void *address, uint32 size)
-{
-	if (type != 1)
-	{
-		return;
-	}
-	uint32_t startAddr = (uint32_t) address;
-	uint32_t endAddr = startAddr + size;
+void CFE_PSP_FlushCaches(uint32 type, void *address, uint32 size) {
+  if (type != 1) {
+    return;
+  }
+  uint32_t startAddr = (uint32_t)address;
+  uint32_t endAddr = startAddr + size;
 
-	startAddr &= ~31;
-	endAddr = (endAddr + 31) & ~31;
+  startAddr &= ~31;
+  endAddr = (endAddr + 31) & ~31;
 
-	SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, endAddr - startAddr);
+  SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, endAddr - startAddr);
 
-	__DSB();
-	__ISB();
+  __DSB();
+  __ISB();
 }
 
-uint32 CFE_PSP_GetProcessorId(void)
-{
-	return CFE_PSP_CPU_ID;
-}
+uint32 CFE_PSP_GetProcessorId(void) { return CFE_PSP_CPU_ID; }
 
-uint32 CFE_PSP_GetSpacecraftId(void)
-{
-	return CFE_PSP_SPACECRAFT_ID;
-}
+uint32 CFE_PSP_GetSpacecraftId(void) { return CFE_PSP_SPACECRAFT_ID; }
 
-const char *CFE_PSP_GetProcessorName(void)
-{
-	return CFE_PSP_CPU_NAME;
-}
+const char *CFE_PSP_GetProcessorName(void) { return CFE_PSP_CPU_NAME; }
 
+uint32 CFE_PSP_Get_Timer_Tick(void) { /* TODO */ }
