@@ -29,7 +29,7 @@ void CFE_PSP_Restart(uint32 resetType) {
 
 uint32 CFE_PSP_GetRestartType(uint32 *restartSubType) {
   if (restartSubType != NULL) {
-    restartSubType = CFE_PSP_ReservedMemoryMap.BootPtr->bsp_reset_type;
+    &restartSubType = CFE_PSP_ReservedMemoryMap.BootPtr->bsp_reset_type;
   }
 
   return CFE_PSP_ReservedMemoryMap.BootPtr->bsp_reset_type;
